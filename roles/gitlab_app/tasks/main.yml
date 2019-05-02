@@ -1,0 +1,30 @@
+
+- name: update repositories cache
+  apt:
+     update_cache: yes
+
+- name: install dependencies
+  apt:
+     name: "{{ packages }}"
+  vars:
+     packages:
+      - curl
+      - openssh-server
+      - ca-certificates
+      - postfix
+
+- name: add the git_lab package repository and install the package
+  shell: |
+      #!/bin/bash
+
+      curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh | sudo bash
+      EXTERNAL_URL="{{ gitlab_url }}" apt-get install gitlab-ee
+
+- name: add gitlab.rb
+  template:
+    src: source/gitlab.rb
+    dest: /etc/gitlab/gitlab.rb
+
+- name: reconfigure gitlab
+  command: gitlab-ctl reconfigure
+

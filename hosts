@@ -1,0 +1,10 @@
+[all:children]
+app
+database
+
+[app]
+gitlab-app
+
+[database]
+gitlab-db
+
