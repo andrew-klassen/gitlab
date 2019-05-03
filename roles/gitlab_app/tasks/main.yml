@@ -13,12 +13,17 @@
       - ca-certificates
       - postfix
 
-- name: add the git_lab package repository and install the package
-  shell: |
-      #!/bin/bash
+- name: add the git_lab package repository
+  command: curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh | bash
 
-      curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh | sudo bash
-      EXTERNAL_URL="{{ gitlab_url }}" apt-get install gitlab-ee
+- name: install dependencies
+  apt:
+     name: "{{ packages }}"
+  vars:
+     packages:
+      - gitlab-ee
+     environment:
+      EXTERNAL_URL: "{{ gitlab_url }}"
 
 - name: add gitlab.rb
   template:

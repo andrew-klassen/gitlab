@@ -2,6 +2,7 @@
 - name: update repositories cache
   apt:
      update_cache: yes
+     cache_valid_time: 3600
 
 - name: install dependencies
   apt:
@@ -18,21 +19,25 @@
     regexp: '^#listen_addresses'
     line: "listen_addresses = '*'"
     backrefs: yes
+  register: postgresql_conf
 
 - name: add entry to pg_hba for all hosts
   lineinfile:
     path: /etc/postgresql/10/main/pg_hba.conf
     line: "host all all 0.0.0.0/0 trust"
+  register: pg_hba_conf
 
 - name: restart and enable postgres
   service:
     name: postgresql
     state: restarted
     enabled: yes
+  when: postgresql_conf is changed or pg_hba_conf is changed
 
 - name: create gitlab user 
   command: sudo -u postgres psql -c "create user gitlab with encrypted password '{{ gitlab_password }}';"
-  ignore_errors: yes
+  register: command_result
+  failed_when: "'already exists' in command_result.stderr"
 
 - name: give gitlab superuser role
   command: sudo -u postgres psql -c "alter role gitlab superuser;"
