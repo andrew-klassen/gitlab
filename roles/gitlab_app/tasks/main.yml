@@ -2,6 +2,7 @@
 - name: update repositories cache
   apt:
      update_cache: yes
+     cache_valid_time: 3600
 
 - name: install dependencies
   apt:
@@ -13,8 +14,14 @@
       - ca-certificates
       - postfix
 
-- name: add the git_lab package repository
-  command: curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh | bash
+- name: get the gitlab repository script
+  get_url:
+    url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh
+    dest: /tmp/script.deb.sh
+    mode: 0700
+
+- name: run the gitlab repository script
+  command: /tmp/script.deb.sh
 
 - name: install dependencies
   apt:

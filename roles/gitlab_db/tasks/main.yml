@@ -36,20 +36,30 @@
 
 - name: create gitlab user 
   command: sudo -u postgres psql -c "create user gitlab with encrypted password '{{ gitlab_password }}';"
+  args:  
+    warn: false
   register: command_result
-  failed_when: "'already exists' in command_result.stderr"
+  failed_when: "'already exists' not in command_result.stderr"
+  changed_when: "'already exists' not in command_result.stderr"
 
 - name: give gitlab superuser role
   command: sudo -u postgres psql -c "alter role gitlab superuser;"
-  ignore_errors: yes
+  args:
+    warn: false
+  failed_when: "'already exists' not in command_result.stderr" 
+  changed_when: "'already exists' not in command_result.stderr"
 
 - name: create gitlab user database
   command: sudo -u postgres psql -c "create database gitlab;"
-  ignore_errors: yes
+  args:  
+    warn: false
+  failed_when: "'already exists' not in command_result.stderr"
+  changed_when: "'already exists' not in command_result.stderr"
 
-- name: 
+- name: create the gitlab_production database
   command: sudo -u postgres psql -c "create database gitlab_production;"
-  ignore_errors: yes
-
-
+  args:
+    warn: false
+  failed_when: "'already exists' not in command_result.stderr"
+  changed_when: "'already exists' not in command_result.stderr"
 

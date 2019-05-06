@@ -1,5 +1,7 @@
+
 - hosts: database
   become: true
+  gather_facts: no
   vars_files:
    - vars
   roles:
@@ -7,7 +9,9 @@
 
 - hosts: app
   become: true
+  gather_facts: no
   vars_files:
    - vars 
   roles:
    - gitlab_app
+

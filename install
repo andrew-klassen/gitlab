@@ -34,5 +34,5 @@ fi
 
 gitlab_password=$(openssl rand -base64 30)
 
-ansible-playbook gitlab.yml -vvv -e "gitlab_password=${gitlab_password} ansible_user=${ssh_username} ansible_ssh_pass=${ssh_password} ansible_sudo_pass=${ssh_password}"
+ansible-playbook gitlab.yml -e "gitlab_password=${gitlab_password} ansible_user=${ssh_username} ansible_ssh_pass=${ssh_password} ansible_sudo_pass=${ssh_password}"
 
